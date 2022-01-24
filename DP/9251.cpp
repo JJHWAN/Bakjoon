@@ -8,7 +8,6 @@
 #include <memory.h>
 
 // LCS problem
-
 using namespace std;
 using ll = long long;
 
