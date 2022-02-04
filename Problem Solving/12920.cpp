@@ -22,20 +22,11 @@ using ll = long long;
 
 // 1. K개 물건이 준비되어 있다.
 // 2. 1, 2, 4, ... , 2^m 그리고 K+1 - 2^(m+1)  크기의 패키지 물건이 준비되어 있다.
+// (같은 물건들을 개수마다 엮어서 새로운 물건으로 취급한다? => 그러면 logK개의 물건 추가로 그냥 DP를 사용 가능)
 
-// 1번과 2번은 같은가?
-// 2진수로 K를 나타내서 OXOX...를 하면 K개를 모두 반복하기 보다는 logK개만 처리하면 된다?
-// 1이 통과하면 2를 검사, 
 
-typedef struct X{
-    int v, c, k;
-};
-
-vector <pair<double, X>> v;
-
-int cmp(pair<double, X> a, pair<double, X> b){
-    return a.first >= b.first ? 1 : 0; 
-}
+vector <pair<ll, ll>> a;
+ll dp[2000][10101] = {0, };
 
 int main(void){
  
@@ -45,21 +36,37 @@ int main(void){
 
     int n, m;
     cin >> n >> m;
+
+    a.push_back({0,0});
     
-    double lf;
-    X tmp;
-    for(int i=0;i<n;i++){
-        cin >> tmp.v >> tmp.c >> tmp.k;
-        lf =  (double)tmp.c/tmp.v;
-        v.push_back(make_pair(lf, tmp));
+    ll v, c, k;
+     for(int i=0;i<n;i++){
+        ll tmp = 1, sum = 0;
+        cin >> v >> c >> k;
+        while(sum + tmp <= k){
+            a.push_back({v*tmp, c*tmp});
+            sum += tmp;
+            tmp *= 2;
+        }
+        if(k - sum > 0){
+            a.push_back({v * (k - sum), c * (k - sum)});
+        }
     }
 
-    sort(v.begin(), v.end(), cmp);
+    int h = a.size();
+    for(int i=1;i<h;i++){
+        for(int j=0;j<=m;j++){
+            dp[i][j] = max(dp[i][j], dp[i-1][j]);
+            if(j >= a[i].first){
+                dp[i][j] = max(dp[i][j], dp[i-1][j - a[i].first] + a[i].second);
+            }
+        }
+    }
+    v = 0;
+    for(int i=0;i<=m;i++){
+        v = max(v, dp[h-1][i]);
+    }
+    cout << v;
 
-    // 무게 당 만족도로 먼저 접근
-    // DFS로 풀까.. BFS로 풀까...
-    int weight = m, profit = 0, a;
-    
-    cout << profit;
     return 0;
 }
