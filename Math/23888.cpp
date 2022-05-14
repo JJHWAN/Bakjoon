@@ -41,10 +41,11 @@ ll func1(ll l, ll r) {
 }
 
 ll func2(int l, int r) {
-	// Al ~ Ar ±îÁöÀÇ ÃÖ´ë °ø¾à¼ö
+	// Al ~ Ar ì˜ ìµœëŒ€ ê³µì•½ìˆ˜ ë°˜í™˜
 	if (l == r) return (a + (l - 1)* d);
-	// gcd(a, a+d) = d => gcd(a+xd, a+(x+1)d) = d;
-	// gcd(a, b, c) = gcd(gcd(a,b), c)
+	// 1. gcd(a, a+d) = gcd(a, d) = K  
+	// 2. gcd(a+xd, a+(x+1)d) = gcd(d, a+xd) = gcd(d, a) = K 
+	// 3. gcd(a, b, c) = gcd(gcd(a,b), c)
 	return y;
 }
 

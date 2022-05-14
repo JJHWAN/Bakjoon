@@ -1,54 +1,70 @@
-#define _CRT_SECURE_NO_WARNINGS
-
-#include <cstdio>
-#include <vector>
-#include <algorithm>
+#include <iostream>
 #include <memory.h>
-
 using namespace std;
+using ll = long long;
+
+// M, N <= 500
 
 int m, n;
-int map[501][501];
-int D[501][501] = { -1, };
+int maze[501][501], dp[501][501], checked[501][501];
 int dir[4][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
-
-int dfs(int x, int y);
 
 int dfs(int x, int y) {
 
-
-	if (x == m - 1 && y == n - 1) return 1;
-
-	if (D[x][y] == -1) {
-		// ó�� ������ ���,
-		D[x][y] = 0;
-		for (int i = 0; i < 4; i++) {
-			if (x + dir[i][0] < 0 || x + dir[i][0] >= m) continue;
-			if (y + dir[i][1] < 0 || y + dir[i][1] >= n) continue;
-			if (map[x + dir[i][0]][y + dir[i][1]] < map[x][y])
-				D[x][y] += dfs(x + dir[i][0], y + dir[i][1]);
-		}
+	if (dp[x][y] > 0) {
+		// 이후 길의 개수가 구해져있는 dp[x][y]까지 도달했다면
+		return dp[x][y];
 	}
+	else {
+		// 이미 방문해서 확인한 좌표라면 => 길이 없는 곳이면 더 이상 확인하지 않고 돌아간다.
+		if (checked[x][y]) return 0;
 
-	return D[x][y];
+		int tempx, tempy, result, sum = 0;
+		for (int i = 0; i < 4; i++) {
+			tempx = x + dir[i][0];
+			tempy = y + dir[i][1];
+			if (tempx >= 0 && m > tempx && tempx >= 0 && n > tempy) {
+				// 우리가 고려해야하는 위치내의 좌표라면
+				// dfs를 이용해서 각 좌표의 값을 구해준다.
+				if (maze[tempx][tempy] < maze[x][y]) {
+					// 내려가는 지점이라면
+					dp[x][y] += dfs(tempx, tempy);
+				}
+			}
+		}
+		
+		if (dp[x][y] == 0)
+			checked[x][y] = 1; // 여긴 길 없어요~
+		return dp[x][y];
+	}
 }
 
 int main(void) {
 
-	scanf("%d %d", &m, &n);
-	
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	cin >> m >> n;
+
+	memset(maze, -1, sizeof(maze));
+	memset(dp, 0, sizeof(dp));
+	memset(checked, 0, sizeof(checked));
+
 	for (int i = 0; i < m; i++) {
 		for (int j = 0; j < n; j++) {
-			scanf("%d", &map[i][j]);
+			cin >> maze[i][j];
 		}
 	}
 
-	// DFS + DP? or backtracking?
-	// ������ DFS ��� -> �ð� �ʰ�!
-	// 1. �׻� ��������θ� �̵� �����ϴ�
-
-	printf("%d", dfs(0, 0));
-
+	// dp[x][y] -> (x, y) 부터 출구로 나가는 경우의 수
+	// 상하좌우 모두 이동가능
+	// 항상 높이가 더 낮은 지점으로만 이동 가능
+	// -> 내가 이동한 지점으로부터 다시 올수는 없다.
+	dp[m - 1][n - 1] = 1;
+	dfs(0, 0);
+	
+	cout << dp[0][0];
 
 	return 0;
 }
