@@ -108,7 +108,7 @@ int serch(int x, int y) {
 		if (info.size > map[cur_x][cur_y] && map[cur_x][cur_y] != 0) {
 			// 먹는 칸에 도달했다
 			info.cnt += 1;
-			map[x][y] = 0;
+			// map[x][y] = 0;
 			min_x = cur_x, min_y = cur_y;
 			while (!empty() && tmp->dist == dist) {
 
@@ -128,7 +128,7 @@ int serch(int x, int y) {
 			}
 
 			fish_num[map[min_x][min_y]]--;
-			map[min_x][min_y] = 9;
+			map[min_x][min_y] = 0;
 			info.x = min_x;
 			info.y = min_y;
 			break;
@@ -192,6 +192,7 @@ int main(void) {
 				info.y = j;
 				info.size = 2;
 				info.cnt = 0;
+				map[i][j] = 0;
 			}
 			else if (map[i][j] > 0) {
 				fish_num[map[i][j]]++;
